@@ -34,7 +34,7 @@ $comentarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Comentarios - Denuncia #<?php echo $id; ?></title>
 </head>
 <body>
-    <h1>Denuncia #<?php echo $id; ?> - <?php echo htmlspecialchars($denuncia['tipo']); ?></h1>
+    <h1>Denuncia #<?php echo $id; ?> - <?php echo htmlspecialchars($denuncia['tipo']); ?> (<?php echo ucfirst($denuncia['gravedad']); ?>)</h1>
     <p><b>Ubicación:</b> <?php echo htmlspecialchars($denuncia['ubicacion']); ?></p>
     <p><b>Descripción:</b> <?php echo htmlspecialchars($denuncia['descripcion']); ?></p>
     <?php if ($denuncia['foto']): ?>

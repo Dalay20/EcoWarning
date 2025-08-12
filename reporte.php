@@ -13,6 +13,17 @@ foreach ($datos as $fila) {
     $tipos[] = ucfirst($fila['tipo']);
     $totales[] = $fila['total'];
 }
+
+$stmt2 = $db->query("SELECT gravedad, COUNT(*) as total FROM denuncias GROUP BY gravedad");
+$datosGravedad = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+$niveles = [];
+$totalesGravedad = [];
+
+foreach ($datosGravedad as $fila) {
+    $niveles[] = ucfirst($fila['gravedad']);
+    $totalesGravedad[] = $fila['total'];
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -51,5 +62,25 @@ foreach ($datos as $fila) {
         }
     });
     </script>
+
+    <h2>Reporte por nivel de gravedad</h2>
+    <canvas id="graficoGravedad" width="400" height="200"></canvas>
+
+    <script>
+    var ctx2 = document.getElementById('graficoGravedad').getContext('2d');
+    var grafico2 = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: <?php echo json_encode($niveles); ?>,
+            datasets: [{
+                label: 'Cantidad de denuncias',
+                data: <?php echo json_encode($totalesGravedad); ?>,
+                backgroundColor: ['#4caf50', '#ff9800', '#f44336']
+            }]
+        },
+        options: { responsive: true }
+    });
+    </script>
+
 </body>
 </html>
