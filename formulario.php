@@ -27,6 +27,14 @@
         <input type="file" name="foto">
         <br>
 
+        <label>Nivel de gravedad:</label>
+        <select name="gravedad" required>
+            <option value="baja">Baja</option>
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+        </select>
+        <br>
+
         <button type="submit">Enviar denuncia</button>
         <button type="button" onclick="window.location.href='index.php'"> Cancelar y volver al mapa </button>
     </form>

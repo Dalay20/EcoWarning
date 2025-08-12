@@ -5,8 +5,8 @@ $db = conectarBD();
 // Capturar filtros desde GET
 $filtroTipo = isset($_GET['tipo']) && $_GET['tipo'] != '' ? $_GET['tipo'] : null;
 $filtroFecha = isset($_GET['fecha']) && $_GET['fecha'] != '' ? $_GET['fecha'] : null;
+$filtroGravedad = isset($_GET['gravedad']) && $_GET['gravedad'] != '' ? $_GET['gravedad'] : null;
 
-// Construir consulta con filtros
 $query = "SELECT * FROM denuncias WHERE 1=1";
 $params = [];
 
@@ -18,6 +18,11 @@ if ($filtroTipo) {
 if ($filtroFecha) {
     $query .= " AND date(fecha) = ?";
     $params[] = $filtroFecha;
+}
+
+if ($filtroGravedad) {
+    $query .= " AND gravedad = ?";
+    $params[] = $filtroGravedad;
 }
 
 $query .= " ORDER BY fecha DESC";
@@ -54,6 +59,14 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <label>Fecha:</label>
         <input type="date" name="fecha" value="<?php echo htmlspecialchars($filtroFecha); ?>">
 
+        <label>Gravedad:</label>
+        <select name="gravedad">
+            <option value="">Todas</option>
+            <option value="baja" <?php if(isset($_GET['gravedad']) && $_GET['gravedad']=='baja') echo 'selected'; ?>>Baja</option>
+            <option value="media" <?php if(isset($_GET['gravedad']) && $_GET['gravedad']=='media') echo 'selected'; ?>>Media</option>
+            <option value="alta" <?php if(isset($_GET['gravedad']) && $_GET['gravedad']=='alta') echo 'selected'; ?>>Alta</option>
+        </select>
+
         <button type="submit">Filtrar</button>
         <a href="index.php">Quitar filtros</a>
     </form>
@@ -76,6 +89,7 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Fecha</th>
                 <th>Foto</th>
                 <th>Acciones</th>
+                <th>Gravedad</th>
             </tr>
             <?php foreach ($denuncias as $d): ?>
             <tr>
@@ -93,6 +107,7 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td>
                     <a href="comentario.php?id=<?php echo $d['id']; ?>">Ver comentarios</a>
                 </td>
+                <td><?php echo ucfirst($d['gravedad']); ?></td>
             </tr>
             <?php endforeach; ?>
         </table>
@@ -117,7 +132,7 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (d.ubicacion) {
             var coords = d.ubicacion.split(",");
             var marker = L.marker([parseFloat(coords[0]), parseFloat(coords[1])]).addTo(map);
-            var popup = "<b>" + d.tipo + "</b><br>" + d.descripcion;
+            var popup = "<b>" + d.tipo + "</b> (" + d.gravedad + ")<br>" + d.descripcion;
             if (d.foto) {
                 popup += "<br><img src='" + d.foto + "' width='150'>";
             }

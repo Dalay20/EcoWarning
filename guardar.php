@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipo = $_POST['tipo'];
     $ubicacion = $_POST['ubicacion'];
     $descripcion = $_POST['descripcion'];
+    $gravedad = $_POST['gravedad'];
 
     // Manejo de la foto
     $fotoRuta = null;
@@ -18,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $db = conectarBD();
-        $stmt = $db->prepare("INSERT INTO denuncias (tipo, ubicacion, descripcion, foto) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$tipo, $ubicacion, $descripcion, $fotoRuta]);
+        $stmt = $db->prepare("INSERT INTO denuncias (tipo, ubicacion, descripcion, foto, gravedad) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$tipo, $ubicacion, $descripcion, $fotoRuta, $gravedad]);
 
         header("Location: index.php");
         exit;
