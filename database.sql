@@ -1,14 +1,13 @@
--- Tabla principal de denuncias
 CREATE TABLE denuncias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tipo TEXT NOT NULL,
-    ubicacion TEXT NOT NULL, -- puede ser lat,long
+    ubicacion TEXT NOT NULL,
     descripcion TEXT,
     foto TEXT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    gravedad TEXT
 );
 
--- Tabla de comentarios
 CREATE TABLE comentarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_denuncia INTEGER NOT NULL,
@@ -16,3 +15,5 @@ CREATE TABLE comentarios (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(id_denuncia) REFERENCES denuncias(id)
 );
+.exit
+
