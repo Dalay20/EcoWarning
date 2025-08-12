@@ -14,6 +14,7 @@ foreach ($datos as $fila) {
     $totales[] = $fila['total'];
 }
 
+// Contar denuncias por gravedad
 $stmt2 = $db->query("SELECT gravedad, COUNT(*) as total FROM denuncias GROUP BY gravedad");
 $datosGravedad = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -31,16 +32,35 @@ foreach ($datosGravedad as $fila) {
     <meta charset="UTF-8">
     <title>Reporte de denuncias</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .grafico-container {
+            width: 500px;
+            height: 300px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Reporte de denuncias por tipo</h1>
-    <canvas id="grafico" width="50" height="50"></canvas>
-    <button type="button" onclick="window.location.href='index.php'"> Volver al mapa </button>
+    <h1>Reportes</h1>
+    
+    <h2>Denuncias por tipo</h2>
+    <div class="grafico-container">
+        <canvas id="grafico"></canvas>
+    </div>
+
+    <h2>Reporte por nivel de gravedad</h2>
+    <div class="grafico-container">
+        <canvas id="graficoGravedad"></canvas>
+    </div>
+
+    <p>
+        <button type="button" onclick="window.location.href='index.php'"> Volver al mapa </button>
+    </p>
 
     <script>
     var ctx = document.getElementById('grafico').getContext('2d');
     var grafico = new Chart(ctx, {
-        type: 'bar', // También puede ser 'pie' o 'doughnut'
+        type: 'bar',
         data: {
             labels: <?php echo json_encode($tipos); ?>,
             datasets: [{
@@ -53,6 +73,7 @@ foreach ($datosGravedad as $fila) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { display: false }
             },
@@ -61,12 +82,7 @@ foreach ($datosGravedad as $fila) {
             }
         }
     });
-    </script>
 
-    <h2>Reporte por nivel de gravedad</h2>
-    <canvas id="graficoGravedad" width="400" height="200"></canvas>
-
-    <script>
     var ctx2 = document.getElementById('graficoGravedad').getContext('2d');
     var grafico2 = new Chart(ctx2, {
         type: 'pie',
@@ -78,9 +94,11 @@ foreach ($datosGravedad as $fila) {
                 backgroundColor: ['#4caf50', '#ff9800', '#f44336']
             }]
         },
-        options: { responsive: true }
+        options: { 
+            responsive: true,
+            maintainAspectRatio: false
+        }
     });
     </script>
-
 </body>
 </html>

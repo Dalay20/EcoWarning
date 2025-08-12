@@ -30,6 +30,23 @@ $query .= " ORDER BY fecha DESC";
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Resumen general
+$totalDenuncias = count($denuncias);
+$totalAlta = 0;
+$totalMedia = 0;
+$totalBaja = 0;
+
+foreach ($denuncias as $d) {
+    if ($d['gravedad'] == 'alta') {
+        $totalAlta++;
+    } elseif ($d['gravedad'] == 'media') {
+        $totalMedia++;
+    } elseif ($d['gravedad'] == 'baja') {
+        $totalBaja++;
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -88,7 +105,7 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <th>Descripción</th>
                 <th>Fecha</th>
                 <th>Foto</th>
-                <th>Acciones</th>
+                <th>Comentarios</th>
                 <th>Gravedad</th>
             </tr>
             <?php foreach ($denuncias as $d): ?>
@@ -111,6 +128,14 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tr>
             <?php endforeach; ?>
         </table>
+        <!-- Resumen -->
+        <hr>
+        <p>
+            <b>Total denuncias:</b> <?php echo $totalDenuncias; ?> 
+            - <b>Alta:</b> <?php echo $totalAlta; ?> 
+            - <b>Media:</b> <?php echo $totalMedia; ?> 
+            - <b>Baja:</b> <?php echo $totalBaja; ?>
+        </p>
     <?php else: ?>
         <p>No hay denuncias para mostrar.</p>
     <?php endif; ?>
