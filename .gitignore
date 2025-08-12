@@ -31,3 +31,24 @@ auth.json
 
 # Vue
 /dist
+
+# Ignorar base de datos
+db.sqlite
+
+# Ignorar imágenes subidas
+/uploads/
+
+# Ignorar archivos temporales
+*.log
+*.tmp
+
+# Ignorar configuración local (si creas config.local.php)
+config.local.php
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDEs
+.vscode/
+.idea/

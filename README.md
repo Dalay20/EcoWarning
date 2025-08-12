@@ -14,3 +14,4 @@ Permite registrar, visualizar y filtrar denuncias geolocalizadas con evidencia f
 - `/backend` → Código fuente de Laravel
 - `/frontend` → Código fuente de Vue.js
 - `/docs` → Documentación y propuestas
+php -S 0.0.0.0:8000
