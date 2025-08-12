@@ -60,6 +60,43 @@ $denuncias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div id="map"></div>
 
+<!-- Lista de denuncias -->
+<h2>Listado de denuncias</h2>
+<?php if ($denuncias): ?>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Tipo</th>
+            <th>Ubicación</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Foto</th>
+            <th>Acciones</th>
+        </tr>
+        <?php foreach ($denuncias as $d): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($d['tipo']); ?></td>
+            <td><?php echo htmlspecialchars($d['ubicacion']); ?></td>
+            <td><?php echo htmlspecialchars($d['descripcion']); ?></td>
+            <td><?php echo $d['fecha']; ?></td>
+            <td>
+                <?php if ($d['foto']): ?>
+                    <img src="<?php echo $d['foto']; ?>" width="80">
+                <?php else: ?>
+                    Sin foto
+                <?php endif; ?>
+            </td>
+            <td>
+                <a href="comentario.php?id=<?php echo $d['id']; ?>">Ver comentarios</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+<?php else: ?>
+    <p>No hay denuncias para mostrar.</p>
+<?php endif; ?>
+
+
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
     var map = L.map('map').setView([-1.8312, -78.1834], 6); // Ecuador
