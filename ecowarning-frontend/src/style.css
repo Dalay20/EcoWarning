@@ -1,0 +1,12 @@
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+button { cursor: pointer; }
+
+.card { background: #fff; border-radius: 16px; box-shadow: 0 10px 20px rgba(0,0,0,.06); padding: 16px; }
+.input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
+.label { font-size: 12px; opacity: .8; margin-bottom: 6px; display: inline-block; }
+.btn { appearance: none; border: 0; background: #111827; color: white; padding: 10px 14px; border-radius: 10px; }
+.btn.secondary { background: #374151; }
+.btn.ghost { background: transparent; color: #111827; border: 1px solid #e5e7eb; }
+.grid { display: grid; gap: 16px; }

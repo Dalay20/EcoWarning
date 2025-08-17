@@ -110,3 +110,13 @@ http://localhost:8000
 ✅ Resumen general de denuncias  
 
 ---
+
+PARA CARGAR BASE DATOS
+cd /workspaces/EcoWarning/backend
+php -S 0.0.0.0:8000
+
+
+PARA CARGAR EL FRONT
+cd /workspaces/EcoWarning/ecowarning-frontend
+cd ../ecowarning-frontend
+npm run dev
