@@ -4,6 +4,28 @@ require 'db.php';
 
 $db = conectarBD();
 
+/**
+ * Leer un parametro del cuerpo, ya sea desde $_POST o desde JSON
+ */
+function body_param($key){
+    if (isset($POST[$key])) return $_POST[$key];
+
+    static $json = null;
+    if ($json === null) {
+        $raw = file_get_contents('php://input');
+        if ($raw) {
+            $decoded = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $json = $decoded;
+            } else {
+                $json = [];
+            }
+        } else {
+            $json = [];
+        }
+    }
+    return $json[$key] ?? null;
+}
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // --- Obtener comentarios de una denuncia ---
@@ -27,7 +49,12 @@ try {
         }
 
         // Obtener comentarios
-        $stmt = $db->prepare("SELECT * FROM comentarios WHERE id_denuncia = ? ORDER BY fecha DESC");
+        $stmt = $db->prepare("
+        SELECT id,id_denuncia,comentario,fecha
+        FROM comentarios 
+        WHERE id_denuncia = ? 
+        ORDER BY fecha DESC
+        ");
         $stmt->execute([$id]);
         $comentarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,25 +67,57 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // --- Insertar nuevo comentario ---
-        $idDenuncia = $_POST['id_denuncia'] ?? null;
-        $comentario = $_POST['comentario'] ?? null;
+    // 1) Intentar leer como form-data / x-www-form-urlencoded
+    $idDenuncia = $_POST['id_denuncia'] ?? null;
+    $comentario = $_POST['comentario'] ?? null;
 
-        if (!$idDenuncia || !$comentario) {
-            http_response_code(400);
-            echo json_encode(["ok" => false, "error" => "Faltan campos obligatorios"]);
-            exit;
+    // 2) Si no llegó por $_POST, intentar leer JSON (php://input)
+    if ($idDenuncia === null || $comentario === null) {
+        $raw = file_get_contents('php://input');
+        if ($raw) {
+            $json = json_decode($raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
+                if ($idDenuncia === null) $idDenuncia = $json['id_denuncia'] ?? null;
+                if ($comentario === null)  $comentario  = $json['comentario']  ?? null;
+            }
         }
+    }
 
-        $stmt = $db->prepare("INSERT INTO comentarios (id_denuncia, comentario) VALUES (?, ?)");
-        $stmt->execute([$idDenuncia, trim($comentario)]);
+    $idDenuncia = intval($idDenuncia);
+    $comentario = is_string($comentario) ? trim($comentario) : '';
 
-        echo json_encode([
-            "ok" => true,
-            "mensaje" => "Comentario agregado correctamente"
-        ]);
+    if ($idDenuncia <= 0 || $comentario === '') {
+        http_response_code(400);
+        echo json_encode(["ok" => false, "error" => "Faltan campos obligatorios"]);
         exit;
     }
+
+    // INSERT INTO sin fecha -> SQLite pondrá CURRENT_TIMESTAMP
+    $stmt = $db->prepare("
+        INSERT INTO comentarios (id_denuncia, comentario)
+        VALUES (?, ?)
+    ");
+    $stmt->execute([$idDenuncia, $comentario]);
+
+    $newId = $db->lastInsertId();
+
+    // Devolver el comentario recién creado (útil para actualizar el front sin otro GET)
+    $stmt = $db->prepare("
+        SELECT id, id_denuncia, comentario, fecha
+        FROM comentarios
+        WHERE id = ?
+    ");
+    $stmt->execute([$newId]);
+    $nuevoComentario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        "ok" => true,
+        "mensaje" => "Comentario agregado correctamente",
+        "comentario" => $nuevoComentario
+    ]);
+    exit;
+}
+
 
     // Si llega otro método HTTP
     http_response_code(405);
