@@ -2,45 +2,50 @@
 header("Content-Type: application/json; charset=UTF-8");
 require 'db.php';
 
-$db = conectarBD();
-
 try {
-    // Contar denuncias por tipo
-    $stmt = $db->query("SELECT tipo, COUNT(*) as total FROM denuncias GROUP BY tipo");
-    $datosTipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $db = conectarBD();
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $tipos = [];
-    $totalesTipo = [];
-    foreach ($datosTipo as $fila) {
-        $tipos[] = ucfirst($fila['tipo']);
-        $totalesTipo[] = $fila['total'];
+    // ÚLTIMOS 7 DÍAS (incluye hoy)
+    $sqlTipo = "
+        SELECT COALESCE(tipo,'Sin tipo') AS etiqueta, COUNT(*) AS total
+        FROM denuncias
+        WHERE datetime(fecha) >= datetime('now','-7 days')
+        GROUP BY etiqueta
+        ORDER BY total DESC
+    ";
+    $rowsTipo = $db->query($sqlTipo)->fetchAll(PDO::FETCH_ASSOC);
+
+    $labelsTipo = [];
+    $valuesTipo = [];
+    foreach ($rowsTipo as $r) {
+        $labelsTipo[] = ucfirst((string)$r['etiqueta']);
+        $valuesTipo[] = (int)$r['total'];
     }
 
-    // Contar denuncias por gravedad
-    $stmt2 = $db->query("SELECT gravedad, COUNT(*) as total FROM denuncias GROUP BY gravedad");
-    $datosGravedad = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    $sqlGrav = "
+        SELECT COALESCE(gravedad,'Sin gravedad') AS etiqueta, COUNT(*) AS total
+        FROM denuncias
+        WHERE datetime(fecha) >= datetime('now','-7 days')
+        GROUP BY etiqueta
+        ORDER BY total DESC
+    ";
+    $rowsGrav = $db->query($sqlGrav)->fetchAll(PDO::FETCH_ASSOC);
 
-    $niveles = [];
-    $totalesGravedad = [];
-    foreach ($datosGravedad as $fila) {
-        $niveles[] = ucfirst($fila['gravedad']);
-        $totalesGravedad[] = $fila['total'];
+    $labelsGrav = [];
+    $valuesGrav = [];
+    foreach ($rowsGrav as $r) {
+        $labelsGrav[] = ucfirst((string)$r['etiqueta']);
+        $valuesGrav[] = (int)$r['total'];
     }
 
-    // Respuesta en JSON
     echo json_encode([
         "ok" => true,
-        "por_tipo" => [
-            "labels" => $tipos,
-            "values" => $totalesTipo
-        ],
-        "por_gravedad" => [
-            "labels" => $niveles,
-            "values" => $totalesGravedad
-        ]
+        "vacio" => (count($valuesTipo) === 0 && count($valuesGrav) === 0),
+        "por_tipo" => ["labels" => $labelsTipo, "values" => $valuesTipo],
+        "por_gravedad" => ["labels" => $labelsGrav, "values" => $valuesGrav]
     ]);
-
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     http_response_code(500);
     echo json_encode([
         "ok" => false,
@@ -48,4 +53,3 @@ try {
         "detalle" => $e->getMessage()
     ]);
 }
-
