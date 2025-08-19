@@ -19,7 +19,7 @@
           <td class="td">{{ d.descripcion }}</td>
           <td class="td">{{ d.fecha }}</td>
           <td class="td">
-            <img v-if="d.foto" :src="d.foto" style="width:70px; border-radius:8px;" />
+            <img v-if="d.foto" :src="fotoUrl(d.foto)" style="width:70px; border-radius:8px;" />
             <span v-else>—</span>
           </td>
           <td class="td" :style="{ textTransform: 'capitalize' }">{{ d.gravedad }}</td>
@@ -36,7 +36,17 @@
 </template>
 
 <script setup>
+import { UPLOADS_URL } from '../services/api'
 const props = defineProps({ denuncias: { type: Array, default: () => [] } })
+
+function fotoUrl(foto) {
+  if (!foto) return null
+  // Si ya es URL absoluta (http/https), no modificar
+  if (/^https?:\/\//.test(foto)) return foto
+  // Si empieza con /uploads/, usar UPLOADS_URL
+  if (foto.startsWith('/uploads/')) return UPLOADS_URL + foto.replace('/uploads/', '')
+  return foto
+}
 </script>
 
 <style scoped>

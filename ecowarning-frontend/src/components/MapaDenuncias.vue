@@ -5,11 +5,18 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import L from 'leaflet'
+import { UPLOADS_URL } from '../services/api'
 
-// Fix de íconos en Vite
-const iconUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png'
-const shadowUrl = 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-L.Icon.Default.mergeOptions({ iconUrl, shadowUrl })
+// Fix de íconos en Vite (URL absolutas para evitar problemas con Vite)
+const iconUrl = '/leaflet/marker-icon.png'
+const iconRetinaUrl = '/leaflet/marker-icon-2x.png'
+const shadowUrl = '/leaflet/marker-shadow.png'
+
+L.Icon.Default.mergeOptions({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl
+})
 
 const props = defineProps({
   denuncias: { type: Array, default: () => [] }
@@ -19,6 +26,7 @@ const mapEl = ref(null)
 let map, markersLayer
 
 onMounted(() => {
+  console.log('MapaDenuncias onMounted')
   map = L.map(mapEl.value).setView([-1.8312, -78.1834], 6) // Ecuador
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map)
   markersLayer = L.layerGroup().addTo(map)
@@ -27,18 +35,34 @@ onMounted(() => {
 
 watch(() => props.denuncias, renderMarkers, { deep: true })
 
+function fotoUrl(foto) {
+  if (!foto) return null
+  if (/^https?:\/\//.test(foto)) return foto
+  if (foto.startsWith('/uploads/')) return UPLOADS_URL + foto.replace('/uploads/', '')
+  return foto
+}
+
 function renderMarkers() {
+  console.log('MapaDenuncias onMounted')
   if (!markersLayer) return
   markersLayer.clearLayers()
   props.denuncias.forEach(d => {
     if (!d.ubicacion) return
-    const [lat, lng] = String(d.ubicacion).split(',').map(Number)
-    if (Number.isFinite(lat) && Number.isFinite(lng)) {
-      const popup = `<b>${d.tipo}</b> (${d.gravedad})<br>${d.descripcion || ''}` +
-        (d.foto ? `<br><img src="${d.foto}" style="max-width:160px; border-radius:8px; margin-top:6px;">` : '') +
-        (d.id ? `<br><a href="/denuncia/${d.id}">Ver comentarios</a>` : '')
-      L.marker([lat, lng]).bindPopup(popup).addTo(markersLayer)
+    // Limpiar espacios y validar formato
+    const partes = String(d.ubicacion).split(',').map(s => s.trim())
+    if (partes.length !== 2) return
+    const lat = Number(partes[0])
+    const lng = Number(partes[1])
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return
+    // Solo mostrar popup si hay tipo y gravedad
+    let popup = ''
+    if (d.tipo || d.gravedad) {
+      popup = `<b>${d.tipo || ''}</b> ${d.gravedad ? '(' + d.gravedad + ')' : ''}`
     }
+    if (d.descripcion) popup += `<br>${d.descripcion}`
+    if (d.foto) popup += `<br><img src="${fotoUrl(d.foto)}" style="max-width:160px; border-radius:8px; margin-top:6px;">`
+    if (d.id) popup += `<br><a href="/denuncia/${d.id}">Ver comentarios</a>`
+    L.marker([lat, lng]).bindPopup(popup).addTo(markersLayer)
   })
 }
 </script>

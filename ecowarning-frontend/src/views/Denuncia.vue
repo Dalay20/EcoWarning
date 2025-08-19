@@ -4,7 +4,7 @@
       <h2 style="margin:0 0 8px 0;">Denuncia #{{ denuncia.id }} — {{ denuncia.tipo }} ({{ denuncia.gravedad }})</h2>
       <div style="opacity:.8; font-size: 14px;">{{ denuncia.ubicacion }} • {{ denuncia.fecha }}</div>
       <p style="margin-top: 10px;">{{ denuncia.descripcion }}</p>
-      <img v-if="denuncia.foto" :src="denuncia.foto" style="max-width: 320px; border-radius: 12px; margin-top: 8px;" />
+  <img v-if="denuncia.foto" :src="fotoUrl(denuncia.foto)" style="max-width: 320px; border-radius: 12px; margin-top: 8px;" />
     </div>
 
     <div class="card">
@@ -27,10 +27,18 @@
   </div>
 </template>
 
+
 <script setup>
 import { onMounted, ref } from 'vue'
-import api from '../services/api'
+import api, { UPLOADS_URL } from '../services/api'
 import { useRoute } from 'vue-router'
+
+function fotoUrl(foto) {
+  if (!foto) return null
+  if (/^https?:\/\//.test(foto)) return foto
+  if (foto.startsWith('/uploads/')) return UPLOADS_URL + foto.replace('/uploads/', '')
+  return foto
+}
 
 const route = useRoute()
 const id = Number(route.params.id)
