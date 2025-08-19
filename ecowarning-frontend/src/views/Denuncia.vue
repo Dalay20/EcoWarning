@@ -4,7 +4,7 @@
       <h2 style="margin:0 0 8px 0;">Denuncia #{{ denuncia.id }} — {{ denuncia.tipo }} ({{ denuncia.gravedad }})</h2>
       <div style="opacity:.8; font-size: 14px;">{{ denuncia.ubicacion }} • {{ denuncia.fecha }}</div>
       <p style="margin-top: 10px;">{{ denuncia.descripcion }}</p>
-      <img v-if="denuncia.foto" :src="denuncia.foto" style="max-width: 320px; border-radius: 12px; margin-top: 8px;" />
+      <img v-if="fotoUrl" :src="fotoUrl" style="max-width: 320px; border-radius: 12px; margin-top: 8px;" />
     </div>
 
     <div class="card">
@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import api from '../services/api'
 import { useRoute } from 'vue-router'
 
@@ -39,6 +39,11 @@ const denuncia = ref(null)
 const comentarios = ref([])
 const nuevo = ref('')
 const cargando = ref(false)
+
+const API_URL = import.meta.env.VITE_API_URL
+const fotoUrl = computed(() =>
+  denuncia.value?.foto ? `${API_URL}${denuncia.value.foto}` : null
+)
 
 async function cargar() {
   const { data } = await api.get(`/comentario.php?id=${id}`)

@@ -19,7 +19,11 @@
           <td class="td">{{ d.descripcion }}</td>
           <td class="td">{{ d.fecha }}</td>
           <td class="td">
-            <img v-if="d.foto" :src="d.foto" style="width:70px; border-radius:8px;" />
+            <img
+              v-if="d.foto"
+              :src="`${API_URL}${d.foto}`"
+              style="width:70px; border-radius:8px;"
+            />
             <span v-else>—</span>
           </td>
           <td class="td" :style="{ textTransform: 'capitalize' }">{{ d.gravedad }}</td>
@@ -37,6 +41,7 @@
 
 <script setup>
 const props = defineProps({ denuncias: { type: Array, default: () => [] } })
+const API_URL = import.meta.env.VITE_API_URL
 </script>
 
 <style scoped>
