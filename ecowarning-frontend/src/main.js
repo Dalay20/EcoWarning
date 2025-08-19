@@ -4,7 +4,6 @@ import router from './router'
 import './style.css'
 
 // Leaflet CSS
-import 'leaflet/dist/leaflet.css'
 
 const app = createApp(App)
 

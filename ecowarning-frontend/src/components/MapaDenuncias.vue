@@ -8,14 +8,11 @@ import L from 'leaflet'
 import { UPLOADS_URL } from '../services/api'
 
 // Fix de íconos en Vite (URL absolutas para evitar problemas con Vite)
-const iconUrl = '/leaflet/marker-icon.png'
-const iconRetinaUrl = '/leaflet/marker-icon-2x.png'
-const shadowUrl = '/leaflet/marker-shadow.png'
-
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconUrl,
-  iconRetinaUrl,
-  shadowUrl
+  iconUrl: '/leaflet/marker-icon.png',
+  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+  shadowUrl: '/leaflet/marker-shadow.png'
 })
 
 const props = defineProps({
@@ -43,7 +40,8 @@ function fotoUrl(foto) {
 }
 
 function renderMarkers() {
-  console.log('MapaDenuncias onMounted')
+  L.marker([-0.18, -78.46]).addTo(map).bindPopup('Pin de prueba')
+  console.log('RenderesMarkers onMounted')
   if (!markersLayer) return
   markersLayer.clearLayers()
   props.denuncias.forEach(d => {
