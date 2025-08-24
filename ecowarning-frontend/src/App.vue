@@ -3,7 +3,7 @@
   <div class="app-bg min-h-screen flex flex-col">
     <header class="main-header">
       <div class="header-content">
-        <img alt="EcoWarning" src="/favicon.ico" width="32" height="32" />
+        <img alt="EcoWarning" src="/logo_02.png" width="32" height="32" />
         <h1 class="logo-title">EcoWarning!</h1>
         <nav class="main-nav">
           <RouterLink to="/">Mapa</RouterLink>

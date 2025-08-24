@@ -4,119 +4,129 @@
 Permite registrar, visualizar y filtrar denuncias geolocalizadas con evidencia fotográfica y nivel de gravedad.  
 Los reportes se muestran en un mapa interactivo y también en tablas filtrables, con estadísticas gráficas.
 
----
 
-## 📌 Tecnologías
+## 🛠 Herramientas Usadas
 
-- **Backend:** PHP puro (sin frameworks)
-- **Frontend:** HTML, CSS y JavaScript básico
+- **Backend:** PHP 7+, SQLite3
+- **Frontend:** Vue 3, Vite, Vue Router, componentes personalizados
 - **Base de datos:** SQLite
-- **Mapa:** OpenStreetMap con Leaflet.js
-- **Gráficos:** Chart.js
-- **Almacenamiento de imágenes:** Carpeta local `/uploads`
+- **Otros:** OpenStreetMap con Leaflet.js, Chart.js para gráficos
 
----
+
 
 ## 📂 Estructura del Proyecto
 
 ```
-/ecowarning
+/backend                       # Backend en PHP (API + SQLite)
 │
-├── index.php         # Mapa, filtros y listado de denuncias
-├── formulario.php    # Formulario para registrar nueva denuncia
-├── guardar.php       # Procesa y guarda denuncias
-├── comentario.php    # Agrega y muestra comentarios
-├── reporte.php       # Estadísticas con Chart.js
-├── db.php            # Conexión a la base de datos SQLite
-├── /uploads          # Carpeta de imágenes subidas
-├── /css              # Estilos CSS
-└── /js               # Scripts JavaScript
+├── database.db                # Base de datos SQLite
+├── database.sql               # Script SQL para recrear la base de datos
+├── db.php                     # Conexión a SQLite
+├── index.php                  # Página principal (mapa + denuncias)
+├── formulario.php             # Formulario para nueva denuncia
+├── guardar.php                # Endpoint para guardar denuncias
+├── comentario.php             # Endpoint para comentarios
+├── reporte.php                # Reportes y estadísticas
+├── /uploads                   # Carpeta de imágenes subidas por los usuarios
+│   ├── 1756054981_incendio.jpg
+│   └── ... (otros archivos .jpg)
+
+/ecowarning-frontend           # Frontend en Vue 3 + Vite
+├──/src                        # Código fuente principal
+    ├── main.js                # Entrada de la app, monta Vue y router
+    ├── App.vue                # Componente raíz
+    │
+    ├── /components            # Componentes reutilizables
+    │   ├── FiltersBar.vue     # Barra de filtros de denuncias
+    │   ├── ListaDenuncias.vue # Lista de denuncias
+    │   └── MapaDenuncias.vue  # Mapa interactivo con ubicaciones
+    │
+    ├── /views                 # Vistas (páginas asociadas a rutas)
+    │   ├── Home.vue           # Página de inicio
+    │   ├── Reportes.vue       # Estadísticas y gráficos
+    │   ├── NuevaDenuncia.vue  # Formulario para crear denuncias
+    │   └── Denuncia.vue       # Detalle de una denuncia + comentarios
+    │
+    ├── /router                # Configuración de rutas
+    └── /services              # Conexión al backend/API
+
 ```
 
----
+## ⚙ Requisitos Previos
 
-## ⚙ Instalación y Uso
+Antes de comenzar asegúrate de tener instalado:
+
+- **Node.js** (versión 16 o superior) 👉 [descargar aquí](https://nodejs.org/)
+- **npm** (incluido con Node.js)
+- **PHP** (>=7.4) 👉 [descargar aquí](https://www.php.net/downloads)
+- **SQLite3** 👉 ya viene instalado en la mayoría de distribuciones (Linux/Mac).  
+  Para Windows: [descargar aquí](https://www.sqlite.org/download.html)
+- Un navegador web moderno (**Chrome, Firefox, Edge**)
+
+## 🚀 Instalación
 
 ### 1️⃣ Clonar el repositorio
 ```bash
-git clone https://github.com/usuario/ecowarning.git
+git clone https://github.com/Dalay20/ecowarning.git
 cd ecowarning
 ```
 
-### 2️⃣ Crear base de datos SQLite
-Ejecutar en la terminal:
+### 2️⃣ Configurar el Backend
+1. Ir a la carpeta backend/:
 ```bash
-sqlite3 ecowarning.db
+cd backend
 ```
-Dentro de SQLite, crear tablas:
-```sql
-CREATE TABLE denuncias (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tipo TEXT NOT NULL,
-    ubicacion TEXT NOT NULL,
-    descripcion TEXT,
-    foto TEXT,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    gravedad TEXT
-);
-
-CREATE TABLE comentarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_denuncia INTEGER NOT NULL,
-    comentario TEXT NOT NULL,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(id_denuncia) REFERENCES denuncias(id)
-);
-.exit
+2. Verifica que tienes SQLite:
+```bash 
+sqlite3 --version
+```
+3. Crear la base de datos (si no existe):
+```bash  
+sqlite3 database.db < database.sql
+```
+4. Levantar el servidor PHP:
+```bash 
+php -S localhost:8000
 ```
 
-### 3️⃣ Iniciar servidor local de PHP
+### 3️⃣ Configurar el Frontend
+1. Ir a la carpeta del frontend:
 ```bash
-php -S 0.0.0.0:8000
+cd ecowarning-frontend
 ```
-Abrir en el navegador:
+2. Instalar dependencias:
+```bash 
+npm install
 ```
-http://localhost:8000
+3. Ejecutar en modo desarrollo:
+```bash  
+npm run dev
 ```
 
----
+## ✨ Uso de la Demo
+1. Abrir el navegador en `http://localhost:5173` (o la URL que indique Vite).
+2. Navegar entre las páginas:
+    
+    ✅ Registrar denuncia con:
+    - Tipo de incidente  
+    - Nivel de gravedad (Baja, Media, Alta)
+    - Ubicación geográfica  
+    - Descripción  
+    - Foto  
+
+
+    ✅ Ver denuncias en un mapa interactivo  
+    ✅ Filtrar por tipo, fecha y gravedad  
+    ✅ Ver denuncias en tabla debajo del mapa  
+    ✅ Agregar y leer comentarios  
+    ✅ Ver estadísticas en gráficos (por tipo y gravedad)  
+    ✅ Resumen general de denuncias  
 
 ## 📍 Coordenadas de ejemplo (Ecuador)
 
 | Ciudad        | Latitud, Longitud        |
 |--------------|--------------------------|
-| Quito        | `-0.180653, -78.467834`   |
-| Guayaquil    | `-2.189412, -79.889066`   |
-| Cuenca       | `-2.900128, -79.005896`   |
 | Loja         | `-3.99313, -79.20422`     |
 | Galápagos    | `-0.74293, -90.31392`     |
 
----
 
-## ✨ Funcionalidades
-
-✅ Registrar denuncia con:
-- Tipo de incidente  
-- Ubicación geográfica  
-- Descripción  
-- Foto  
-- Nivel de gravedad (Baja, Media, Alta)
-
-✅ Ver denuncias en un mapa interactivo  
-✅ Filtrar por tipo, fecha y gravedad  
-✅ Ver denuncias en tabla debajo del mapa  
-✅ Agregar y leer comentarios  
-✅ Ver estadísticas en gráficos (por tipo y gravedad)  
-✅ Resumen general de denuncias  
-
----
-
-PARA CARGAR BASE DATOS
-cd /workspaces/EcoWarning/backend
-php -S 0.0.0.0:8000
-
-
-PARA CARGAR EL FRONT
-cd /workspaces/EcoWarning/ecowarning-frontend
-cd ../ecowarning-frontend
-npm run dev
