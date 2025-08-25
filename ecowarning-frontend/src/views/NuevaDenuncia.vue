@@ -1,7 +1,10 @@
 <template>
-  <form class="card grid" style="grid-template-columns: 1fr; max-width: 720px;" @submit.prevent="enviar">
-    <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
-      <div>
+    <div class="denuncia-wrapper">
+    <form class="card grid" style="grid-template-columns: 1fr; max-width: 720px;" @submit.prevent="enviar">
+
+    <h2 class="charts-title">Agregar una nueva denuncia</h2>
+    <div class="grid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+    <div>
         <label class="label">Tipo</label>
         <select v-model="form.tipo">
           <option disabled value="">Selecciona…</option>
@@ -20,6 +23,8 @@
         </select>
       </div>
     </div>
+    
+    
 
     <div>
       <label class="label">Ubicación (lat,lng)</label>
@@ -44,6 +49,7 @@
 
     <p v-if="msg" :style="{ color: ok ? 'green' : 'crimson' }">{{ msg }}</p>
   </form>
+  </div>
 </template>
 
 <script setup>
@@ -74,7 +80,7 @@ async function enviar() {
     if (data?.ok) {
       ok.value = true
       msg.value = 'Denuncia registrada (ID ' + data.id + ')'
-      // Limpieza básica
+     
       form.value = { tipo:'', gravedad:'', ubicacion:'', descripcion:'' }
       file.value = null
     } else {
@@ -87,3 +93,30 @@ async function enviar() {
   }
 }
 </script>
+
+<style scoped>
+.denuncia-wrapper {
+  display: flex;
+  justify-content: center; 
+  margin-top: 2rem;
+}
+
+
+.denuncia-form {
+  max-width: 720px; 
+  width: 100%;     
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #24915e;
+}
+.charts-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #24915e; 
+  margin-bottom: 1rem;
+}
+</style>

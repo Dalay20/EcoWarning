@@ -3,7 +3,7 @@ header("Content-Type: application/json; charset=UTF-8");
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Método no permitido
+    http_response_code(405);
     echo json_encode(["ok" => false, "error" => "Método no permitido"]);
     exit;
 }
@@ -20,19 +20,17 @@ if (!$tipo || !$ubicacion || !$descripcion || !$gravedad) {
     exit;
 }
 
-// Manejo de la foto
 $fotoRuta = null;
 if (isset($_FILES['foto']) && !empty($_FILES['foto']['name'])) {
     $uploadsDir = __DIR__ . "/uploads/";
     if (!is_dir($uploadsDir)) {
-        mkdir($uploadsDir, 0777, true); // crea la carpeta si no existe
+        mkdir($uploadsDir, 0777, true); 
     }
 
     $nombreFoto = time() . "_" . basename($_FILES['foto']['name']);
     $rutaDestino = $uploadsDir . $nombreFoto;
 
     if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
-        // Guardar ruta relativa (para evitar errores de mixed content en HTTPS)
         $fotoRuta = "/uploads/" . $nombreFoto;
     }
 }

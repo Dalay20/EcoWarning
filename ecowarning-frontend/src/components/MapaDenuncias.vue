@@ -7,7 +7,6 @@ import { onMounted, ref, watch } from 'vue'
 import L from 'leaflet'
 import { UPLOADS_URL } from '../services/api'
 
-// Fix de íconos en Vite (URL absolutas para evitar problemas con Vite)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: '/leaflet/marker-icon.png',
@@ -46,13 +45,11 @@ function renderMarkers() {
   markersLayer.clearLayers()
   props.denuncias.forEach(d => {
     if (!d.ubicacion) return
-    // Limpiar espacios y validar formato
     const partes = String(d.ubicacion).split(',').map(s => s.trim())
     if (partes.length !== 2) return
     const lat = Number(partes[0])
     const lng = Number(partes[1])
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return
-    // Solo mostrar popup si hay tipo y gravedad
     let popup = ''
     if (d.tipo || d.gravedad) {
       popup = `<b>${d.tipo || ''}</b> ${d.gravedad ? '(' + d.gravedad + ')' : ''}`

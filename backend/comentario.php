@@ -4,9 +4,7 @@ require 'db.php';
 
 $db = conectarBD();
 
-/**
- * Leer un parametro del cuerpo, ya sea desde $_POST o desde JSON
- */
+
 function body_param($key){
     if (isset($POST[$key])) return $_POST[$key];
 
@@ -28,7 +26,6 @@ function body_param($key){
 }
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        // --- Obtener comentarios de una denuncia ---
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
         if ($id <= 0) {
@@ -37,7 +34,6 @@ try {
             exit;
         }
 
-        // Buscar la denuncia
         $stmt = $db->prepare("SELECT * FROM denuncias WHERE id = ?");
         $stmt->execute([$id]);
         $denuncia = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -48,7 +44,6 @@ try {
             exit;
         }
 
-        // Obtener comentarios
         $stmt = $db->prepare("
         SELECT id,id_denuncia,comentario,fecha
         FROM comentarios 
@@ -67,11 +62,9 @@ try {
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 1) Intentar leer como form-data / x-www-form-urlencoded
     $idDenuncia = $_POST['id_denuncia'] ?? null;
     $comentario = $_POST['comentario'] ?? null;
 
-    // 2) Si no llegó por $_POST, intentar leer JSON (php://input)
     if ($idDenuncia === null || $comentario === null) {
         $raw = file_get_contents('php://input');
         if ($raw) {
@@ -92,7 +85,6 @@ try {
         exit;
     }
 
-    // INSERT INTO sin fecha -> SQLite pondrá CURRENT_TIMESTAMP
     $stmt = $db->prepare("
         INSERT INTO comentarios (id_denuncia, comentario)
         VALUES (?, ?)
@@ -101,7 +93,6 @@ try {
 
     $newId = $db->lastInsertId();
 
-    // Devolver el comentario recién creado (útil para actualizar el front sin otro GET)
     $stmt = $db->prepare("
         SELECT id, id_denuncia, comentario, fecha
         FROM comentarios
@@ -119,7 +110,6 @@ try {
 }
 
 
-    // Si llega otro método HTTP
     http_response_code(405);
     echo json_encode(["ok" => false, "error" => "Método no permitido"]);
 

@@ -1,9 +1,10 @@
 <template>
   <div class="grid" style="grid-template-columns: 1fr;">
+    <h2 class="page-title">Mapa de denuncias ambientales</h2>
     <FiltersBar v-model="filtros" @submit="cargar" />
     <MapaDenuncias :denuncias="denuncias" />
     <ListaDenuncias :denuncias="denuncias" />
-    <div class="card" v-if="resumen">
+    <div class="card resumen-card" v-if="resumen">
       <b>Resumen:</b>
       <span style="margin-left:8px">Total: {{ total }}</span>
       <span style="margin-left:8px">Alta: {{ resumen.alta }}</span>
@@ -40,4 +41,14 @@ async function cargar() {
 }
 
 onMounted(cargar)
+
 </script>
+<style scoped>
+.page-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #24915e; 
+  margin-bottom: 1rem;
+}
+</style>

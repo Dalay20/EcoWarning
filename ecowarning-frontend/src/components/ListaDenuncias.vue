@@ -41,9 +41,7 @@ const props = defineProps({ denuncias: { type: Array, default: () => [] } })
 
 function fotoUrl(foto) {
   if (!foto) return null
-  // Si ya es URL absoluta (http/https), no modificar
   if (/^https?:\/\//.test(foto)) return foto
-  // Si empieza con /uploads/, usar UPLOADS_URL
   if (foto.startsWith('/uploads/')) return UPLOADS_URL + foto.replace('/uploads/', '')
   return foto
 }

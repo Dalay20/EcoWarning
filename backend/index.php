@@ -4,7 +4,7 @@ require 'db.php';
 
 $db = conectarBD();
 
-// Capturar filtros desde GET
+
 $filtroTipo = isset($_GET['tipo']) && $_GET['tipo'] != '' ? $_GET['tipo'] : null;
 $filtroFecha = isset($_GET['fecha']) && $_GET['fecha'] != '' ? $_GET['fecha'] : null;
 $filtroGravedad = isset($_GET['gravedad']) && $_GET['gravedad'] != '' ? $_GET['gravedad'] : null;

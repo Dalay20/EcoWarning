@@ -3,8 +3,10 @@
   <div class="app-bg min-h-screen flex flex-col">
     <header class="main-header">
       <div class="header-content">
-        <img alt="EcoWarning" src="/logo_02.png" width="32" height="32" />
-        <h1 class="logo-title">EcoWarning!</h1>
+        <img alt="EcoWarning" src="/logo_02.png" width="40" height="40" />
+        <RouterLink to="/" class="logo-title">
+      EcoWarning!
+    </RouterLink>
         <nav class="main-nav">
           <RouterLink to="/">Mapa</RouterLink>
           <RouterLink to="/nueva">Nueva denuncia</RouterLink>
@@ -52,13 +54,18 @@
 }
 
 .main-header {
-  background: var(--header-bg);
-  box-shadow: 0 2px 8px 0 #0002;
+  position: fixed;          
+  top: 0;
+  left: 0;
+  width: 100%;              
+  background: rgba(255, 255, 255, 0.9); 
+  backdrop-filter: blur(6px); 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 0;
-  color: var(--text);
+  z-index: 1000;
 }
 .header-content {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -66,11 +73,12 @@
   padding: 1rem 2rem;
 }
 .logo-title {
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 700;
   color: var(--primary-dark);
   letter-spacing: 1px;
   text-shadow: 0 2px 8px #b2f2d7cc;
+  text-decoration: none;
 }
 .main-nav {
   margin-left: auto;
@@ -89,7 +97,7 @@
 }
 .main-nav a.router-link-active {
   background: var(--primary-dark);
-  color: #fff;
+  color: #1f1c1cff;
   font-weight: 700;
   box-shadow: 0 2px 8px 0 #24915e33;
 }
@@ -108,6 +116,10 @@
   box-shadow: 0 4px 24px 0 #0002;
   padding: 2.5rem 2rem 2rem 2rem;
   min-height: 60vh;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 0;
+  margin-top: 100px;
 }
 
 .main-footer {

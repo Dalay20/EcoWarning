@@ -6,7 +6,7 @@ try {
     $db = conectarBD();
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // ÚLTIMOS 7 DÍAS (incluye hoy)
+
     $sqlTipo = "
         SELECT COALESCE(tipo,'Sin tipo') AS etiqueta, COUNT(*) AS total
         FROM denuncias

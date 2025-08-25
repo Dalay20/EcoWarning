@@ -1,4 +1,6 @@
 <template>
+  <div class="charts-section">
+    <h2 class="charts-title">Reporte semanal</h2>
   <div class="charts-grid">
     <div class="card chart-card">
       <h3>Denuncias por tipo</h3>
@@ -10,6 +12,7 @@
       <canvas id="chartGravedad" class="chart-canvas"></canvas>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -17,7 +20,7 @@ import { onMounted, onBeforeUnmount, ref } from 'vue'
 import api from '../services/api'
 import { Chart, registerables } from 'chart.js'
 
-// Registrar todos los tipos de gráficos
+
 Chart.register(...registerables)
 
 let chart1 = null
@@ -102,18 +105,25 @@ onBeforeUnmount(destroyCharts)
 .charts-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: 1fr;        /* Una columna en móvil */
-  max-width: 1000px;                 /* Centrado y con ancho máximo */
+  grid-template-columns: 1fr;        
+  max-width: 1000px;                 
   margin: 0 auto;
+}
+.charts-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #24915e;
+  text-align: center; 
 }
 @media (min-width: 768px) {
   .charts-grid {
-    grid-template-columns: 1fr 1fr;  /* Dos columnas en desktop */
+    grid-template-columns: 1fr 1fr;  
   }
 }
 
 .chart-card {
-  height: 320px;                     /* Tamaño normal para gráficos */
+  height: 320px;                     
   padding: 12px;
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -128,7 +138,7 @@ onBeforeUnmount(destroyCharts)
 
 .chart-canvas {
   width: 100% !important;
-  height: calc(100% - 28px) !important; /* resto espacio para el título */
+  height: calc(100% - 28px) !important; 
   display: block;
 }
 </style>
